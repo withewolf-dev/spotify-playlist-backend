@@ -1,11 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const passport = require("passport");
 const SpotifyStrategy = require("passport-spotify").Strategy;
 const axios = require("axios");
 const cors = require("cors");
 const app = express();
-const clientID = "2c0cb9d9e47542bf890b26f8c46555cf";
-const clientSecret = "886aec1fba28467d8803dfc913a93e93";
 const puppeteer = require("puppeteer");
 
 let songsFromSpotifyPlaylist = [];
@@ -13,6 +13,15 @@ let songsFromSpotifyPlaylist = [];
 // Create an OAuth2 client using the credentials
 
 app.use(cors({ origin: "http://localhost:3000" }));
+
+let clientID = process.env.CLIENTID;
+let clientSecret = process.env.CLIENT_SECRET;
+
+// let clientID = "2c0cb9d9e47542bf890b26f8c46555cf";
+// let clientSecret = "886aec1fba28467d8803dfc913a93e93";
+
+console.log(process.env.CLIENT_SECRET);
+console.log(clientSecret, "clientSecret");
 
 passport.use(
   new SpotifyStrategy(
@@ -29,39 +38,6 @@ passport.use(
 );
 
 // Route to retrieve playlist songs
-
-app.get("/scrap-youtube", async (req, res) => {
-  // async function createPlaylistAndAddSongs() {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
-  // Go to the website and perform necessary actions to create a playlist
-  await page.goto("https://www.youtube.com/");
-  // Perform actions to create a playlist
-
-  // Search and add songs to the playlist
-  const songs = [
-    "Baby justin biber",
-    "Blank space taylor swift",
-    "kesariyaarijit singh",
-  ];
-  for (const song of songs) {
-    // Search for the song
-    await page.type("#search-input", song);
-    await page.click("#search-button");
-
-    // Add the song to the playlist
-    await page.waitForSelector(".song-search-result");
-    await page.click(".song-search-result");
-
-    // Wait for the song to be added (you may need to adjust the selector and wait time)
-    await page.waitForSelector(".song-added-successfully", { timeout: 5000 });
-  }
-
-  // Close the browser
-  await browser.close();
-  // }
-});
 app.get("/playlist", async (req, res) => {
   try {
     const playlistUrl = req.query.playlistUrl;
@@ -76,17 +52,36 @@ app.get("/playlist", async (req, res) => {
     const tracks = await getPlaylistTracks(accessToken, playlistId);
     songsFromSpotifyPlaylist = extractSongInfo(tracks);
 
-    searchSongsOnYouTube(songsFromSpotifyPlaylist.slice(0, 2))
+    console.log(songsFromSpotifyPlaylist.length);
+    res.status(200).json({
+      numberOfSongs: songsFromSpotifyPlaylist.length,
+      playlist: songsFromSpotifyPlaylist,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving playlist information");
+  }
+});
+
+app.get("/youtube-playlist", async (req, res) => {
+  try {
+    const playlistList = req.query.playlistList;
+
+    if (!playlistList) {
+      return res.status(400).send("Invalid playlist");
+    }
+
+    searchSongsOnYouTube(playlistList.slice(0, 2))
       .then((youtubeLinks) => {
         console.log(youtubeLinks);
-        res.json({ youtubeLinks });
+        res.status(200).json({ youtubeLinks });
       })
       .catch((error) => {
         console.error(error);
       });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error retrieving playlist information");
+    res.status(500).send("Error Creating playlist");
   }
 });
 
@@ -112,6 +107,7 @@ function getPlaylistIdFromUrl(url) {
 
 // Retrieves an access token using the client_credentials flow
 async function getAccessToken() {
+  console.log(`${clientID}:${clientSecret} client id`);
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
     null,
@@ -192,7 +188,7 @@ async function searchSongsOnYouTube(songs) {
   return playlistLink;
 }
 
-app.listen(4000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server is running on port 4000");
 });
 
