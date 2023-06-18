@@ -191,5 +191,3 @@ async function searchSongsOnYouTube(songs) {
 app.listen(process.env.PORT, () => {
   console.log("Server is running on port 4000");
 });
-
-//AIzaSyAG68-AKUFr-9zIIPjiwOBhI76JmsMD7hY
