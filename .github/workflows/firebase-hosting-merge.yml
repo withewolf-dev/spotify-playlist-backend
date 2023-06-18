@@ -18,4 +18,3 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SPOTIFY_997B1 }}"
           channelId: live
           projectId: spotify-997b1
-          node-version: 16
