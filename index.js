@@ -37,8 +37,12 @@ passport.use(
   )
 );
 
+app.get("/api", (req, res) => {
+  res.send("Server running");
+});
+
 // Route to retrieve playlist songs
-app.get("/playlist", async (req, res) => {
+app.get("/api/playlist", async (req, res) => {
   try {
     const playlistUrl = req.query.playlistUrl;
     const playlistId = getPlaylistIdFromUrl(playlistUrl);
@@ -63,7 +67,7 @@ app.get("/playlist", async (req, res) => {
   }
 });
 
-app.get("/youtube-playlist", async (req, res) => {
+app.get("/api//youtube-playlist", async (req, res) => {
   try {
     const playlistList = req.query.playlistList;
 
