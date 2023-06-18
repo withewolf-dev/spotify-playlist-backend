@@ -1,4 +1,5 @@
 require("dotenv").config();
+const functions = require("firebase-functions");
 
 const express = require("express");
 const passport = require("passport");
@@ -192,6 +193,8 @@ async function searchSongsOnYouTube(songs) {
   return playlistLink;
 }
 
-app.listen(process.env.PORT, () => {
-  console.log("Server is running on port 4000");
-});
+// app.listen(process.env.PORT, () => {
+//   console.log("Server is running on port 4000");
+// });
+
+exports.app = functions.https.onRequest(app);
