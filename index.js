@@ -66,13 +66,18 @@ app.get("/playlist", async (req, res) => {
 
 app.get("/youtube-playlist", async (req, res) => {
   try {
+    // console.log(req.query.playlistList);
     const playlistList = req.query.playlistList;
 
     if (!playlistList) {
       return res.status(400).send("Invalid playlist");
     }
 
-    searchSongsOnYouTube(playlistList.slice(0, 2))
+    const invalidString =
+      '[{ name: "Ginza", artist: "morèno, Alf4zi" },{ name: "नalla Freestyle", artist: "Seedhe Maut, DJ Sa" }]';
+    const validString = invalidString.replace(/(\w+):/g, '"$1":');
+
+    searchSongsOnYouTube(JSON.parse(validString))
       .then((youtubeLinks) => {
         console.log(youtubeLinks);
         res.status(200).json({ youtubeLinks });
@@ -108,7 +113,6 @@ function getPlaylistIdFromUrl(url) {
 
 // Retrieves an access token using the client_credentials flow
 async function getAccessToken() {
-  console.log(`${clientID}:${clientSecret} client id`);
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
     null,
@@ -189,8 +193,8 @@ async function searchSongsOnYouTube(songs) {
   return playlistLink;
 }
 
-// app.listen(4000, () => {
-//   console.log("Server is running on port 4000");
-// });
+app.listen(4000, () => {
+  console.log("Server is running on port 4000");
+});
 
 exports.api = functions.https.onRequest(app);
