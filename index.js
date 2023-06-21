@@ -15,14 +15,14 @@ let songsFromSpotifyPlaylist = [];
 
 app.use(cors({ origin: "http://localhost:3000" }));
 
-let clientID = process.env.CLIENTID;
-let clientSecret = process.env.CLIENT_SECRET;
+// let clientID = process.env.CLIENTID;
+// let clientSecret = process.env.CLIENT_SECRET;
 
-// let clientID = "2c0cb9d9e47542bf890b26f8c46555cf";
-// let clientSecret = "886aec1fba28467d8803dfc913a93e93";
+let clientID = "2c0cb9d9e47542bf890b26f8c46555cf";
+let clientSecret = "886aec1fba28467d8803dfc913a93e93";
 
-console.log(process.env.CLIENT_SECRET);
-console.log(clientSecret, "clientSecret");
+// console.log(process.env.CLIENT_SECRET);
+// console.log(clientSecret, "clientSecret");
 
 passport.use(
   new SpotifyStrategy(
@@ -38,12 +38,8 @@ passport.use(
   )
 );
 
-app.get("/api", (req, res) => {
-  res.send("Server running");
-});
-
 // Route to retrieve playlist songs
-app.get("/api/playlist", async (req, res) => {
+app.get("/playlist", async (req, res) => {
   try {
     const playlistUrl = req.query.playlistUrl;
     const playlistId = getPlaylistIdFromUrl(playlistUrl);
@@ -68,7 +64,7 @@ app.get("/api/playlist", async (req, res) => {
   }
 });
 
-app.get("/api//youtube-playlist", async (req, res) => {
+app.get("/youtube-playlist", async (req, res) => {
   try {
     const playlistList = req.query.playlistList;
 
@@ -193,8 +189,8 @@ async function searchSongsOnYouTube(songs) {
   return playlistLink;
 }
 
-// app.listen(process.env.PORT, () => {
+// app.listen(4000, () => {
 //   console.log("Server is running on port 4000");
 // });
 
-exports.app = functions.https.onRequest(app);
+exports.api = functions.https.onRequest(app);
