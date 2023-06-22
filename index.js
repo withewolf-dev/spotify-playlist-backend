@@ -131,7 +131,7 @@ async function getAccessToken() {
   return response.data.access_token;
 }
 
-// Extracts the song name and artist from the playlist tracks
+// Extracts  the song name and artist from the playlist tracks
 function extractSongInfo(tracks) {
   return tracks.map((track) => ({
     name: track.track.name,
