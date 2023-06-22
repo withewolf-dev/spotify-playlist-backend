@@ -73,8 +73,7 @@ app.get("/youtube-playlist", async (req, res) => {
       return res.status(400).send("Invalid playlist");
     }
 
-    const invalidString =
-      '[{ name: "Ginza", artist: "morèno, Alf4zi" },{ name: "नalla Freestyle", artist: "Seedhe Maut, DJ Sa" }]';
+    const invalidString = playlistList;
     const validString = invalidString.replace(/(\w+):/g, '"$1":');
 
     searchSongsOnYouTube(JSON.parse(validString))
@@ -146,7 +145,10 @@ function extractVideoId(link) {
   return match ? match[1] : null;
 }
 async function searchSongsOnYouTube(songs) {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
 
   const youtubeIds = [];
@@ -193,8 +195,8 @@ async function searchSongsOnYouTube(songs) {
   return playlistLink;
 }
 
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
-});
+// app.listen(4000, () => {
+//   console.log("Server is running on port 4000");
+// });
 
 exports.api = functions.https.onRequest(app);
