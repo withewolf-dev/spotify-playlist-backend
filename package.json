@@ -23,7 +23,7 @@
     "googleapis": "^118.0.0",
     "passport": "^0.6.0",
     "passport-spotify": "^2.0.0",
-    "puppeteer": "^20.0.0"
+    "puppeteer": "20.0.0"
   },
   "engines": {
     "node": "16"
